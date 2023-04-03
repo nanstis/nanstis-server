@@ -2,4 +2,4 @@ interface Model {
     id: string;
 }
 
-export {Model};
+export {Model}
