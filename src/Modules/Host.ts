@@ -1,8 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
-import {ConfigModule} from './Config'
 
 module HostModule {
-    import config = ConfigModule.config;
+
 
     export type Method = keyof typeof MethodValue;
 
@@ -13,9 +12,9 @@ module HostModule {
 
 
     export interface HostInterface {
-        get<T>(_path: string, _config?: AxiosRequestConfig): Promise<T>;
+        get<T>(_path: string, _config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
 
-        post<T>(_path: string, _config?: AxiosRequestConfig): Promise<T>;
+        post<T>(_path: string, _config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
     }
 
 
@@ -69,11 +68,11 @@ module HostModule {
         }
     }
 
-    export const GPT: HostInterface = new Host(
-        config.get().OPENAI_DOMAIN_NAME,
-        config.get().OPENAI_BEARER_TOKEN,
-        config.get().OPENAI_API_VERSION
-    )
+    export function newInstance(domainName: string, bearerToken: string, version: string): Host {
+        return new Host(domainName, bearerToken, version)
+    }
+
+
 }
 
 export {HostModule}

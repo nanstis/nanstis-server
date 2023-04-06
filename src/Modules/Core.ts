@@ -20,8 +20,9 @@ module CoreModule {
 
     const core: Core = new Core(config.get().PORT)
 
-    export const load = (path: string, requestHandler: RequestHandler) =>
-        core.getInstance().use(path, requestHandler)
+    export const load = (path: string, handlers: RequestHandler[]) =>
+        handlers.map((handler: RequestHandler) =>
+            core.getInstance().use(path, handler))
 }
 
 export {CoreModule}
