@@ -19,17 +19,12 @@ module ConfigModule {
             this.rootPath = path.join(__dirname, '../../')
         }
 
-        public get(): DotenvParseOutput {
+        public getOutput(): DotenvParseOutput {
             return this.environment
-        }
-
-        public getLogger(): Logger<unknown> {
-            return this.appLogger
         }
     }
 
-    export const config: Configuration = new Configuration(env.config().parsed)
-    export const logger: Logger<unknown> = config.getLogger()
+    export const config: DotenvParseOutput = new Configuration(env.config().parsed).getOutput()
 }
 
 export {ConfigModule}

@@ -1,22 +1,10 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
+import {Method, MethodValue} from '../Domain/Methods'
+import {ConfigModule} from './Config'
 
 module HostModule {
 
-
-    export type Method = keyof typeof MethodValue;
-
-    export enum MethodValue {
-        GET = 'GET',
-        POST = 'POST',
-    }
-
-
-    export interface HostInterface {
-        get<T>(_path: string, _config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-
-        post<T>(_path: string, _config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
-    }
-
+    import config = ConfigModule.config;
 
     abstract class Client {
         protected readonly domainName: string
@@ -40,7 +28,7 @@ module HostModule {
             method: Method,
             config?: AxiosRequestConfig
         ): Promise<T> {
-            return this.axiosInstance.request({
+            return this.axiosInstance.request<T>({
                 ...(config ? config : {}),
                 method: method,
                 url: this.apiVersion + path,
@@ -49,30 +37,44 @@ module HostModule {
                     Authorization: `Bearer ${this.bearerToken}`,
                     'Content-Type': 'application/json',
                 },
-            }).then((response: AxiosResponse<T>) => (response.data as { object: string, data: T }).data)
+            }).then((response: AxiosResponse<T>) => (response.data as { object: object, data: T }).data)
         }
-
     }
 
-    class Host extends Client implements HostInterface {
+    class Host extends Client {
         constructor(domainName: string, bearerToken: string, apiVersion: string) {
             super(domainName, bearerToken, apiVersion)
         }
 
-        public get<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
-            return this.axiosRequest<T>(path, MethodValue.GET, config)
+        public get<T>(path: string, params?: object): Promise<T> {
+            return this.axiosRequest<T>(path, MethodValue.GET, {
+                params: params,
+            })
         }
 
-        public post<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
-            return this.axiosRequest<T>(path, MethodValue.POST, config)
+        public post<T>(path: string, data?: object): Promise<T> {
+            return this.axiosRequest<T>(path, MethodValue.POST, {
+                data: data,
+            })
         }
     }
 
-    export function newInstance(domainName: string, bearerToken: string, version: string): Host {
-        return new Host(domainName, bearerToken, version)
+    export const getHost = (name: string) => {
+        switch (name) {
+            case 'gpt':
+                return new Host(
+                    config.OPENAI_DOMAIN_NAME,
+                    config.OPENAI_BEARER_TOKEN,
+                    config.OPENAI_API_VERSION
+                )
+            case 'assembly':
+                return new Host(
+                    config.ASSEMBLY_DOMAIN_NAME,
+                    config.ASSEMBLY_BEARER_TOKEN,
+                    config.ASSEMBLY_API_VERSION
+                )
+        }
     }
-
-
 }
 
 export {HostModule}

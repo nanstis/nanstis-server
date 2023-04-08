@@ -42,7 +42,7 @@ rules:
   no-unused-vars:
     - 2
     - args: all
-      argsIgnorePattern: ^_
+      argsIgnorePattern: ^[a-z]
       varsIgnorePattern: ^[A-Z]
 
 globals:
