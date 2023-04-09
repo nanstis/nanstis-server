@@ -1,10 +1,19 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
-import {Method, MethodValue} from '../Domain/Methods'
 import {ConfigModule} from './Config'
 
 module HostModule {
 
     import config = ConfigModule.config;
+
+    export enum HostType {
+        GPT = 'GPT',
+        WEAVER = 'WEAVER',
+    }
+
+    export enum MethodValue {
+        GET = 'GET',
+        POST = 'POST',
+    }
 
     abstract class Client {
         protected readonly domainName: string
@@ -25,7 +34,7 @@ module HostModule {
 
         protected axiosRequest<T>(
             path: string,
-            method: Method,
+            method: MethodValue,
             config?: AxiosRequestConfig
         ): Promise<T> {
             return this.axiosInstance.request<T>({
@@ -37,7 +46,7 @@ module HostModule {
                     Authorization: `Bearer ${this.bearerToken}`,
                     'Content-Type': 'application/json',
                 },
-            }).then((response: AxiosResponse<T>) => (response.data as { object: object, data: T }).data)
+            }).then((response: AxiosResponse<T>) => response.data as T)
         }
     }
 
@@ -58,16 +67,16 @@ module HostModule {
             })
         }
     }
-
-    export const getHost = (name: string) => {
-        switch (name) {
-            case 'gpt':
+    
+    export const getHost = (type: HostType): Host => {
+        switch (type) {
+            case HostType.GPT:
                 return new Host(
                     config.OPENAI_DOMAIN_NAME,
                     config.OPENAI_BEARER_TOKEN,
                     config.OPENAI_API_VERSION
                 )
-            case 'assembly':
+            case HostType.WEAVER:
                 return new Host(
                     config.ASSEMBLY_DOMAIN_NAME,
                     config.ASSEMBLY_BEARER_TOKEN,

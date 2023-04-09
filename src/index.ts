@@ -1,6 +1,8 @@
 import {CoreModule} from './Modules/Core'
-import {GptController} from './Controllers/GptController'
+import {ModelController} from './Controllers/ModelController'
+import {ChatController} from './Controllers/ChatController'
 
 CoreModule.bootstrap([
-    new GptController(),
+    new ModelController(),
+    new ChatController(),
 ])

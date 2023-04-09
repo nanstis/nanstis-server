@@ -2,11 +2,12 @@ import * as express from 'express'
 import {Application, Express} from 'express'
 import {ConfigModule} from './Config'
 import * as bodyParser from 'body-parser'
-import {ControllerModule} from './Controller'
+import {ILogObj, Logger} from 'tslog'
+import {RouterModule} from './Router'
 
 module CoreModule {
     import config = ConfigModule.config;
-    import Controller = ControllerModule.Controller;
+    import Controller = RouterModule.Controller;
 
     class Core {
         private readonly serverInstance: Express
@@ -33,6 +34,11 @@ module CoreModule {
             })
         }
     }
+
+    export const logger: Logger<ILogObj> = new Logger<ILogObj>({
+        type: 'pretty',
+        name: 'Application',
+    })
 
     export const bootstrap = (controllers: Controller[]) => new Core(controllers).getApplication()
 }

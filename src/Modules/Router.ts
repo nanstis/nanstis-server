@@ -1,6 +1,6 @@
 import e = require('express');
 
-module ControllerModule {
+module RouterModule {
     export abstract class Controller {
         protected readonly router: e.Router = e()
 
@@ -16,4 +16,4 @@ module ControllerModule {
     }
 }
 
-export {ControllerModule}
+export {RouterModule}
