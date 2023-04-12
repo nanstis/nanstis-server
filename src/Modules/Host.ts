@@ -76,12 +76,6 @@ module HostModule {
                     config.OPENAI_BEARER_TOKEN,
                     config.OPENAI_API_VERSION
                 )
-            case HostType.WEAVER:
-                return new Host(
-                    config.ASSEMBLY_DOMAIN_NAME,
-                    config.ASSEMBLY_BEARER_TOKEN,
-                    config.ASSEMBLY_API_VERSION
-                )
         }
     }
 }

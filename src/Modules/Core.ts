@@ -4,6 +4,7 @@ import {ConfigModule} from './Config'
 import * as bodyParser from 'body-parser'
 import {ILogObj, Logger} from 'tslog'
 import {RouterModule} from './Router'
+import * as cors from 'cors'
 
 module CoreModule {
     import config = ConfigModule.config;
@@ -14,10 +15,10 @@ module CoreModule {
 
         constructor(controllers: Controller[]) {
             this.serverInstance = express()
-            this.serverInstance.listen(config.PORT)
-
             this.initializeMiddlewares()
             this.initializeControllers(controllers)
+
+            this.serverInstance.listen(config.PORT)
         }
 
         public getApplication(): Application {
@@ -26,6 +27,10 @@ module CoreModule {
 
         private initializeMiddlewares(): void {
             this.serverInstance.use(bodyParser.json())
+            this.serverInstance.use(cors({
+                origin: 'http://localhost:5173',
+                allowedHeaders: '*',
+            }))
         }
 
         private initializeControllers(controllers: Controller[]): void {
@@ -42,5 +47,6 @@ module CoreModule {
 
     export const bootstrap = (controllers: Controller[]) => new Core(controllers).getApplication()
 }
+
 
 export {CoreModule}
