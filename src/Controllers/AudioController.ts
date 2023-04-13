@@ -1,26 +1,31 @@
-import {Request, RequestHandler, Response} from 'express'
-import {RouterModule} from '../Modules/Router'
-import {HostModule} from '../Modules/Host'
-import {CompletionDto} from '../Domain/dto/CompletionDto'
+import { Request, RequestHandler, Response } from 'express'
+import { RouterModule } from '../Modules/Router'
+import * as bodyParser from 'body-parser'
+import { CoreModule } from '../Modules/Core'
 import Controller = RouterModule.Controller;
-import HostType = HostModule.HostType;
-import getHost = HostModule.getHost;
+import logger = CoreModule.logger;
 
-class ChatController extends Controller {
-    constructor() {
-        super()
+class AudioController extends Controller {
+  constructor() {
+    super()
+  }
+
+  public generateText(): RequestHandler {
+    return (req: Request, res: Response): void => {
+      logger.info(req.body)
+
     }
+  }
 
-    public generateText(): RequestHandler {
-        return (req: Request, res: Response): void => {
-            getHost(HostType.GPT).post('/audio/transcription', req.body)
-        }
-    }
-
-
-    protected initializeRoutes(): void {
-        this.router.post('/completions', this.generateText())
-    }
+  protected initializeRoutes(): void {
+    this.router.post(
+      '/transcription',
+      bodyParser.urlencoded({
+        extended: true,
+      }),
+      this.generateText()
+    )
+  }
 }
 
-export {ChatController}
+export { AudioController }
