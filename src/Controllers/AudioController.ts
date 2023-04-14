@@ -1,31 +1,36 @@
-import { Request, RequestHandler, Response } from 'express'
-import { RouterModule } from '../Modules/Router'
+import {Request, RequestHandler, Response} from 'express'
 import * as bodyParser from 'body-parser'
-import { CoreModule } from '../Modules/Core'
+import {injectable} from 'tsyringe'
+import {FileService} from '../Services/FileService'
+import {MulterModule} from '../Modules/Multer'
+import {File} from '../Domain/Interfaces/MulterInterface'
+import {RouterModule} from '../Modules/Router'
 import Controller = RouterModule.Controller;
-import logger = CoreModule.logger;
 
+@injectable()
 class AudioController extends Controller {
-  constructor() {
-    super()
-  }
-
-  public generateText(): RequestHandler {
-    return (req: Request, res: Response): void => {
-      logger.info(req.body)
-
+    constructor(private fileService: FileService) {
+        super()
     }
-  }
 
-  protected initializeRoutes(): void {
-    this.router.post(
-      '/transcription',
-      bodyParser.urlencoded({
-        extended: true,
-      }),
-      this.generateText()
-    )
-  }
+    public generateText(): RequestHandler {
+        return (req: Request, res: Response): void => {
+            this.fileService.extractAudio(req.file as unknown as File)
+
+            res.send('Hello World')
+        }
+    }
+
+    protected configureRouter(): void {
+        this.router
+            .use(MulterModule.fileHandler('audio'))
+            .use(bodyParser.urlencoded({extended: true}))
+    }
+
+    protected initializeRoutes(): void {
+        this.router.post('/transcription', this.generateText()
+        )
+    }
 }
 
-export { AudioController }
+export {AudioController}

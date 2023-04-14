@@ -1,13 +1,11 @@
 import {Request, RequestHandler, Response} from 'express'
-import {ModelDto} from '../Domain/dto/ModelDto'
-import {HostModule} from '../Modules/Host'
-import {ModelsDto} from '../Domain/dto/ModelsDto'
+import {DtoModel, DtoModels} from '../Domain/Data/DtoModel'
+import {injectable} from 'tsyringe'
+import {GPT} from '../index'
 import {RouterModule} from '../Modules/Router'
 import Controller = RouterModule.Controller;
-import getHost = HostModule.getHost;
-import HostType = HostModule.HostType;
 
-
+@injectable()
 class ModelController extends Controller {
     constructor() {
         super()
@@ -15,18 +13,21 @@ class ModelController extends Controller {
 
     public getModels(): RequestHandler {
         return (req: Request, res: Response): void => {
-            getHost(HostType.GPT).get<ModelsDto>('/models').then((response: ModelsDto): void => {
-                res.send(response.data.map((model: ModelDto) => model.id))
+            GPT.get<DtoModels>('/models').then((response: DtoModels): void => {
+                res.send(response.data.map((model: DtoModel) => model.id))
             })
         }
     }
 
     public getModel(): RequestHandler {
         return (req: Request, res: Response): void => {
-            getHost(HostType.GPT).get<ModelDto>(`/models/${req.params.modelId}`).then((response: ModelDto): void => {
+            GPT.get<DtoModel>(`/models/${req.params.modelId}`).then((response: DtoModel): void => {
                 res.send(response)
             })
         }
+    }
+
+    protected configureRouter(): void {
     }
 
     protected initializeRoutes(): void {

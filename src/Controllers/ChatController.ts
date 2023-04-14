@@ -1,11 +1,11 @@
 import {Request, RequestHandler, Response} from 'express'
+import {DtoCompletion} from '../Domain/Data/DtoCompletion'
+import {injectable} from 'tsyringe'
+import {GPT} from '../index'
 import {RouterModule} from '../Modules/Router'
-import {HostModule} from '../Modules/Host'
-import {CompletionDto} from '../Domain/dto/CompletionDto'
 import Controller = RouterModule.Controller;
-import getHost = HostModule.getHost;
-import HostType = HostModule.HostType;
 
+@injectable()
 class ChatController extends Controller {
     constructor() {
         super()
@@ -13,11 +13,14 @@ class ChatController extends Controller {
 
     public getCompletion(): RequestHandler {
         return (req: Request, res: Response): void => {
-            getHost(HostType.GPT).post<CompletionDto>('/chat/completions', req.body)
-                .then((response: CompletionDto): void => {
+            GPT.post<DtoCompletion>('/chat/completions', req.body)
+                .then((response: DtoCompletion): void => {
                     res.send(response)
                 })
         }
+    }
+
+    protected configureRouter(): void {
     }
 
     protected initializeRoutes(): void {

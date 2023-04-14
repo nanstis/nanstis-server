@@ -1,20 +1,15 @@
 import * as env from 'dotenv'
 import {DotenvParseOutput} from 'dotenv'
-import {Logger} from 'tslog'
 import * as path from 'path'
+import {HostConfigInterface} from '../Domain/Interfaces/HostInterface'
 
 module ConfigModule {
+
     class Configuration {
-        private readonly appLogger: Logger<unknown>
         private readonly environment: DotenvParseOutput
         private readonly rootPath: string
 
         constructor(environment: DotenvParseOutput) {
-            this.appLogger = new Logger<unknown>({
-                type: 'pretty',
-                name: 'Application',
-            })
-
             this.environment = environment
             this.rootPath = path.join(__dirname, '../../')
         }
@@ -22,9 +17,20 @@ module ConfigModule {
         public getOutput(): DotenvParseOutput {
             return this.environment
         }
+
+        public getRootPath(): string {
+            return this.rootPath
+        }
     }
 
-    export const config: DotenvParseOutput = new Configuration(env.config().parsed).getOutput()
+    export const config: Configuration = new Configuration(env.config().parsed)
+    export const environment: DotenvParseOutput = config.getOutput()
+
+    export const gptConfig: HostConfigInterface = {
+        domainName: environment.OPENAI_DOMAIN_NAME,
+        apiVersion: environment.OPENAI_API_VERSION,
+        bearerToken: environment.OPENAI_BEARER_TOKEN,
+    }
 }
 
 export {ConfigModule}

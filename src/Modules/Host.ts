@@ -1,19 +1,8 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
-import {ConfigModule} from './Config'
+import {MethodValue} from '../Domain/Enums/MethodValue'
+import {HostConfigInterface, IHost} from '../Domain/Interfaces/HostInterface'
 
 module HostModule {
-
-    import config = ConfigModule.config;
-
-    export enum HostType {
-        GPT = 'GPT',
-        WEAVER = 'WEAVER',
-    }
-
-    export enum MethodValue {
-        GET = 'GET',
-        POST = 'POST',
-    }
 
     abstract class Client {
         protected readonly domainName: string
@@ -50,7 +39,7 @@ module HostModule {
         }
     }
 
-    class Host extends Client {
+    class Host extends Client implements IHost {
         constructor(domainName: string, bearerToken: string, apiVersion: string) {
             super(domainName, bearerToken, apiVersion)
         }
@@ -67,16 +56,13 @@ module HostModule {
             })
         }
     }
-    
-    export const getHost = (type: HostType): Host => {
-        switch (type) {
-            case HostType.GPT:
-                return new Host(
-                    config.OPENAI_DOMAIN_NAME,
-                    config.OPENAI_BEARER_TOKEN,
-                    config.OPENAI_API_VERSION
-                )
-        }
+
+    export const newHost = (config: HostConfigInterface): Host => {
+        return new Host(
+            config.domainName,
+            config.bearerToken,
+            config.apiVersion
+        )
     }
 }
 

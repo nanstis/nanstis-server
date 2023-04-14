@@ -1,4 +1,4 @@
-export type CompletionDto = {
+type DtoCompletion = {
     id: string;
     object: string;
     created: number;
@@ -12,3 +12,5 @@ export type CompletionDto = {
         }]
     finish_reason: string;
 }
+
+export {DtoCompletion}

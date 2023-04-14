@@ -1,16 +1,22 @@
-import e = require('express');
+import * as express from 'express'
+
 
 module RouterModule {
+    type Router = express.Router
+
     export abstract class Controller {
-        protected readonly router: e.Router = e()
+        protected readonly router: Router = express()
 
         protected constructor() {
+            this.configureRouter()
             this.initializeRoutes()
         }
 
-        public getRouter(): e.Router {
+        public getRouter(): Router {
             return this.router
         }
+
+        protected abstract configureRouter(): void;
 
         protected abstract initializeRoutes(): void;
     }
