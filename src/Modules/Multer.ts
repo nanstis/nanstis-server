@@ -32,11 +32,10 @@ module MulterModule {
 
         private getStorageEngine(): StorageEngine {
             const location: string = path.join(config.getRootPath(), '/public/tmp')
-            const prefix: string = Date.now() + '-' + Math.round(Math.random() * 1E9)
 
             return multer.diskStorage({
                 destination: this.newHandler(location),
-                filename: this.newHandler(prefix, (file: File) => file.originalname),
+                filename: this.newHandler('', (file: File) => file.originalname),
             })
         }
     }

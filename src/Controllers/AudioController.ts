@@ -1,5 +1,4 @@
 import {Request, RequestHandler, Response} from 'express'
-import * as bodyParser from 'body-parser'
 import {injectable} from 'tsyringe'
 import {FileService} from '../Services/FileService'
 import {MulterModule} from '../Modules/Multer'
@@ -24,7 +23,6 @@ class AudioController extends Controller {
     protected configureRouter(): void {
         this.router
             .use(MulterModule.fileHandler('audio'))
-            .use(bodyParser.urlencoded({extended: true}))
     }
 
     protected initializeRoutes(): void {
