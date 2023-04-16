@@ -19,13 +19,15 @@ module CoreModule {
 
             this.initializeMiddlewares()
             this.initializeControllers(controllers)
-            this.serverInstance.listen(environment.PORT)
+            this.serverInstance.listen(environment.PORT, (): void => {
+                logger.info(`Server is listening on port ${environment.PORT}...`)
+            })
         }
 
         private initializeMiddlewares(): void {
             this.serverInstance.use(bodyParser.json())
             this.serverInstance.use(cors({
-                origin: 'http://localhost:5173',
+                origin: environment.ALLOWED_ORIGIN,
                 allowedHeaders: '*',
                 methods: '*',
             }))
@@ -44,7 +46,6 @@ module CoreModule {
     })
 
     export const bootstrap = (controllers: Controller[]) => new Core(controllers)
-
 }
 
 

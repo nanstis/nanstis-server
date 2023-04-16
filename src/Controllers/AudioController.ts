@@ -2,8 +2,8 @@ import {Request, RequestHandler, Response} from 'express'
 import {injectable} from 'tsyringe'
 import {FileService} from '../Services/FileService'
 import {MulterModule} from '../Modules/Multer'
-import {File} from '../Domain/Interfaces/MulterInterface'
 import {RouterModule} from '../Modules/Router'
+import {File} from '../Domain/Interfaces/MulterInterface'
 import Controller = RouterModule.Controller;
 
 @injectable()
@@ -16,7 +16,9 @@ class AudioController extends Controller {
         return (req: Request, res: Response): void => {
             this.fileService.extractAudio(req.file as unknown as File)
 
-            res.send('Hello World')
+            res.send({
+                text: 'Hello World',
+            })
         }
     }
 

@@ -2,17 +2,25 @@ import {Request, RequestHandler} from 'express'
 import * as multer from 'multer'
 import {StorageEngine} from 'multer'
 import {ConfigModule} from './Config'
-import * as path from 'path'
 import {File, MulterCallback, MulterInterface} from '../Domain/Interfaces/MulterInterface'
+import {CoreModule} from './Core'
+import * as fs from 'fs'
+import * as path from 'path'
+
 
 module MulterModule {
 
     import config = ConfigModule.config;
+    import environment = ConfigModule.environment;
+    import logger = CoreModule.logger;
 
     class FileHandler {
         private readonly requestHandler: RequestHandler
+        private readonly uploadPath: string
 
         constructor(fieldName: string) {
+            this.uploadPath = path.join(config.getRootPath(), environment.UPLOAD_PATH)
+
             this.requestHandler = multer({
                 storage: this.getStorageEngine(),
             }).single(fieldName)
@@ -22,20 +30,19 @@ module MulterModule {
             return this.requestHandler
         }
 
-        private newHandler(absolutePath: string, option?: (file: File) => string): MulterInterface {
+        private pathResolver(): MulterInterface {
             return (req: Request, file: File, multer: MulterCallback): void => {
-                const destination: string = option ? absolutePath + option(file) : absolutePath
-
-                multer(null, destination)
+                const dynamicPath: string = path.join(this.uploadPath, Date.now().toString())
+                fs.mkdir(dynamicPath, {recursive: true}, (err: Error): void => {
+                    err ? logger.info(err) : multer(null, dynamicPath)
+                })
             }
         }
 
         private getStorageEngine(): StorageEngine {
-            const location: string = path.join(config.getRootPath(), '/public/tmp')
 
             return multer.diskStorage({
-                destination: this.newHandler(location),
-                filename: this.newHandler('', (file: File) => file.originalname),
+                destination: this.pathResolver(),
             })
         }
     }

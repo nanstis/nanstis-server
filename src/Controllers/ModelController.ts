@@ -14,7 +14,9 @@ class ModelController extends Controller {
     public getModels(): RequestHandler {
         return (req: Request, res: Response): void => {
             GPT.get<DtoModels>('/models').then((response: DtoModels): void => {
-                res.send(response.data.map((model: DtoModel) => model.id))
+                res.send({
+                    models: response.data.map((model: DtoModel) => model.id),
+                })
             })
         }
     }
