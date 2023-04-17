@@ -1,22 +1,22 @@
 import {Request, RequestHandler, Response} from 'express'
 import {DtoCompletion} from '../Domain/Data/DtoCompletion'
 import {injectable} from 'tsyringe'
-import {GPT} from '../index'
 import {RouterModule} from '../Modules/Router'
+import {AiService} from '../Services/AiService'
 import Controller = RouterModule.Controller;
 
 @injectable()
 class ChatController extends Controller {
-    constructor() {
+
+    constructor(private aiService: AiService) {
         super()
     }
 
     public getCompletion(): RequestHandler {
         return (req: Request, res: Response): void => {
-            GPT.post<DtoCompletion>('/chat/completions', req.body)
-                .then((response: DtoCompletion): void => {
-                    res.send(response)
-                })
+            this.aiService.getCompletion(req.body).then((response: DtoCompletion): void => {
+                res.send(response)
+            })
         }
     }
 

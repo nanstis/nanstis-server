@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "npx tsc -w & nodemon --quiet dist/index.js"
+    "dev": "tsc -w & nodemon --quiet dist/index.js"
   },
   "keywords": [],
   "author": "",

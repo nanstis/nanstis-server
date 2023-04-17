@@ -8,6 +8,8 @@ interface IHost {
     get<T>(path: string, params?: object): Promise<T>
 
     post<T>(path: string, data?: object): Promise<T>
+
+    postFormData<T>(path: string, data: FormData): Promise<T>;
 }
 
-export {HostConfigInterface, IHost}
+export type {HostConfigInterface, IHost}

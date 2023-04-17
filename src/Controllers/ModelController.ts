@@ -1,29 +1,27 @@
 import {Request, RequestHandler, Response} from 'express'
-import {DtoModel, DtoModels} from '../Domain/Data/DtoModel'
+import {DtoModel} from '../Domain/Data/DtoModel'
 import {injectable} from 'tsyringe'
-import {GPT} from '../index'
 import {RouterModule} from '../Modules/Router'
+import {AiService} from '../Services/AiService'
 import Controller = RouterModule.Controller;
 
 @injectable()
 class ModelController extends Controller {
-    constructor() {
+    constructor(private aiService: AiService) {
         super()
     }
 
     public getModels(): RequestHandler {
         return (req: Request, res: Response): void => {
-            GPT.get<DtoModels>('/models').then((response: DtoModels): void => {
-                res.send({
-                    models: response.data.map((model: DtoModel) => model.id),
-                })
+            this.aiService.getModels().then((response: string[]): void => {
+                res.send({models: response})
             })
         }
     }
 
     public getModel(): RequestHandler {
         return (req: Request, res: Response): void => {
-            GPT.get<DtoModel>(`/models/${req.params.modelId}`).then((response: DtoModel): void => {
+            this.aiService.getModel(req.params.modelId).then((response: DtoModel): void => {
                 res.send(response)
             })
         }

@@ -13,4 +13,4 @@ type DtoCompletion = {
     finish_reason: string;
 }
 
-export {DtoCompletion}
+export type {DtoCompletion}

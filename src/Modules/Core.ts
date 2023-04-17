@@ -2,8 +2,8 @@ import * as express from 'express'
 import {Express} from 'express'
 import {ConfigModule} from './Config'
 import * as bodyParser from 'body-parser'
-import {RouterModule} from './Router'
 import * as cors from 'cors'
+import {RouterModule} from './Router'
 import {ILogObj, Logger} from 'tslog'
 
 module CoreModule {
@@ -19,6 +19,7 @@ module CoreModule {
 
             this.initializeMiddlewares()
             this.initializeControllers(controllers)
+
             this.serverInstance.listen(environment.PORT, (): void => {
                 logger.info(`Server is listening on port ${environment.PORT}...`)
             })

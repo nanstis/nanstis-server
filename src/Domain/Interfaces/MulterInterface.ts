@@ -7,4 +7,4 @@ interface MulterInterface {
     (req: Request, file: Express.Multer.File, multer: MulterCallback): void
 }
 
-export {MulterInterface, MulterCallback, File}
+export type {MulterInterface, MulterCallback, File}

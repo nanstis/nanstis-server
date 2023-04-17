@@ -1,12 +1,11 @@
 import {Request, RequestHandler} from 'express'
 import * as multer from 'multer'
-import {StorageEngine} from 'multer'
+import {diskStorage, StorageEngine} from 'multer'
 import {ConfigModule} from './Config'
 import {File, MulterCallback, MulterInterface} from '../Domain/Interfaces/MulterInterface'
 import {CoreModule} from './Core'
 import * as fs from 'fs'
 import * as path from 'path'
-
 
 module MulterModule {
 
@@ -30,7 +29,7 @@ module MulterModule {
             return this.requestHandler
         }
 
-        private pathResolver(): MulterInterface {
+        private getPathResolver(): MulterInterface {
             return (req: Request, file: File, multer: MulterCallback): void => {
                 const dynamicPath: string = path.join(this.uploadPath, Date.now().toString())
                 fs.mkdir(dynamicPath, {recursive: true}, (err: Error): void => {
@@ -40,9 +39,8 @@ module MulterModule {
         }
 
         private getStorageEngine(): StorageEngine {
-
-            return multer.diskStorage({
-                destination: this.pathResolver(),
+            return diskStorage({
+                destination: this.getPathResolver(),
             })
         }
     }

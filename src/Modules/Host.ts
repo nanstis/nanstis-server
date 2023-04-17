@@ -31,11 +31,21 @@ module HostModule {
                 method: method,
                 url: this.apiVersion + path,
                 baseURL: this.domainName,
+            }).then((response: AxiosResponse<T>) => response.data as T)
+        }
+
+        protected url(path: string): string {
+            return `${this.domainName}/${this.apiVersion}` + path
+        }
+
+        protected newHeaders(contentType: string, headers?: object): object {
+            return {
                 headers: {
                     Authorization: `Bearer ${this.bearerToken}`,
-                    'Content-Type': 'application/json',
+                    'Content-Type': contentType,
+                    ...headers,
                 },
-            }).then((response: AxiosResponse<T>) => response.data as T)
+            }
         }
     }
 
@@ -47,14 +57,24 @@ module HostModule {
         public get<T>(path: string, params?: object): Promise<T> {
             return this.axiosRequest<T>(path, MethodValue.GET, {
                 params: params,
+                ...this.newHeaders('application/json'),
             })
         }
 
         public post<T>(path: string, data?: object): Promise<T> {
             return this.axiosRequest<T>(path, MethodValue.POST, {
                 data: data,
+                ...this.newHeaders('application/json'),
             })
         }
+
+        public postFormData<T>(path: string, data: FormData): Promise<T> {
+            return this.axiosInstance.post(this.url(path), data, {
+                ...this.newHeaders('multipart/form-data'),
+            }).then((response: AxiosResponse<T>) => response.data as T)
+        }
+
+
     }
 
     export const newHost = (config: HostConfigInterface): Host => {

@@ -1,6 +1,5 @@
 import * as express from 'express'
 
-
 module RouterModule {
     type Router = express.Router
 

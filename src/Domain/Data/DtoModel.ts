@@ -8,4 +8,4 @@ type DtoModels = {
 }
 
 
-export {DtoModels, DtoModel}
+export type {DtoModels, DtoModel}
