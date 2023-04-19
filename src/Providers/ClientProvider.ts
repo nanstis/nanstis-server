@@ -1,4 +1,5 @@
 import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
+import * as FormData from 'form-data'
 
 class Client {
     private readonly domainName: string
@@ -14,37 +15,31 @@ class Client {
         this.domainName = domainName
         this.apiVersion = apiVersion
         this.bearerToken = bearerToken
-        this.axiosInstance = axios.create({
-            baseURL: this.domainName,
-
-        })
+        this.axiosInstance = axios.create()
     }
 
 
     public get<T>(path: string, params?: object): Promise<T> {
         return this.axiosRequest<T>(path, 'GET', {
             params: params,
-            headers: {
-                Authorization: `Bearer ${this.bearerToken}`,
-                'Content-Type': 'application/json',
-            },
+            ...this.newHeaders('application/json'),
+
         })
     }
 
     public post<T>(path: string, data?: object): Promise<T> {
         return this.axiosRequest<T>(path, 'POST', {
             data: data,
-            headers: {
-                Authorization: `Bearer ${this.bearerToken}`,
-                'Content-Type': 'application/json',
-            },
+            ...this.newHeaders('application/json'),
+
         })
     }
 
     public postFormData<T>(path: string, data: FormData): Promise<T> {
         return this.axiosInstance.post(this.url(path), data, {
-            ...this.newHeaders('multipart/form-data'),
-        }).then((response: AxiosResponse<T>) => response.data as T)
+                ...this.newHeaders('multipart/form-data'),
+            }
+        ).then((response: AxiosResponse<T>) => response.data as T)
     }
 
     private axiosRequest<T>(
@@ -68,6 +63,7 @@ class Client {
         return {
             headers: {
                 'Content-Type': contentType,
+                'Authorization': `Bearer ${this.bearerToken}`,
                 ...headers,
             },
         }

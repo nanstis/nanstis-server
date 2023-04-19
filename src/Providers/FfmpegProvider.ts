@@ -1,6 +1,5 @@
 import {execSync} from 'child_process'
 import {FfmpegFormat} from '../env'
-import {logger} from '../Core/Logger'
 
 class StringBuilder {
     private elements: string[] = []
@@ -10,7 +9,7 @@ class StringBuilder {
     }
 
     public toString(): string {
-        return this.elements.join('')
+        return this.elements.join(' ')
     }
 }
 
@@ -22,7 +21,6 @@ class FfmpegProvider {
         this.inputFile = inputFile
         this.queryBuilder = new StringBuilder()
 
-        logger.info(`Audio streams: ${this.getStreams()}`)
         this.queryBuilder.append(`ffmpeg -i ${this.inputFile}`)
     }
 
@@ -57,18 +55,10 @@ class FfmpegProvider {
     }
 
     public execSync(): Buffer {
+        this.queryBuilder.append('-loglevel quiet')
         return execSync(this.queryBuilder.toString())
     }
 
-    private getStreams(): number {
-        return +execSync(`
-            ffprobe 
-            -v error
-            -show_entries stream=index,codec_type 
-            -of csv=p=0:s=x ${this.inputFile} | grep a | wc -l`)
-    }
 }
 
-export function ffmpeg(inputFile: string): FfmpegProvider {
-    return new FfmpegProvider(inputFile)
-}
+export {FfmpegProvider}

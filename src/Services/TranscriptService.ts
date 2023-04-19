@@ -1,50 +1,75 @@
 import {injectable} from 'tsyringe'
 import {TranscriptRepository} from '../Database/Repository/TranscriptRepository'
 import {Transcript} from '../Database/Models/Transcript'
-import {ffmpeg} from '../Providers/FfmpegProvider'
-import {logger} from '../Core/Logger'
+import {FfmpegProvider} from '../Providers/FfmpegProvider'
 import {File} from '../env'
+import {readdirSync, rmSync} from 'fs'
+import {ClientService} from './ClientService'
+import {join} from 'path'
+import {DtoTranscript} from '../Domain/Data/Dto/DtoTranscript'
+import {SegmentRepository} from '../Database/Repository/SegmentRepository'
+import {Segment} from '../Database/Models/Segment'
+import {logger} from '../Core/Logger'
 
 @injectable()
 class TranscriptService {
-    private dirPath: string
-    private inputPath: string
     private audioPath: string
+    private file: File
 
-    constructor(private repository: TranscriptRepository) {
-
+    constructor(
+        private transcriptRepository: TranscriptRepository,
+        private segmentRepository: SegmentRepository,
+        private clientService: ClientService) {
     }
 
-    public createTranscript(file: File): Promise<Transcript> {
-        this.dirPath = file.destination
-        this.inputPath = file.path
+    public async createTranscript(file: File): Promise<Promise<Segment>[]> {
+        this.file = file
+        logger.info(this.file)
 
-        return this.repository.createTranscript(file.destination).then((transcript: Transcript): Transcript => {
+        const dirPath: string = this.file.destination
+        return this.transcriptRepository.createTranscript(dirPath)
+            .then((transcript: Transcript): Promise<Segment>[] => {
+                this.extractAudio()
+                this.splitAudio()
 
-            logger.info(this.extractAudio())
-            logger.info(this.splitAudio())
+                return readdirSync(dirPath).map((file: string) => {
+                    const filePath: string = join(dirPath, file)
 
-            return transcript
-        })
+                    return this.clientService.getTranscript(filePath)
+                        .then(async (response: DtoTranscript): Promise<Segment> => {
+                            rmSync(filePath)
+
+                            return this.segmentRepository.createSegment(transcript, filePath, response.text)
+                                .then((segment: Segment) => {
+                                    logger.info(segment.absolutePath)
+                                    return segment
+                                })
+                        })
+                })
+            })
     }
 
-    public extractAudio(): string {
-        this.audioPath = `${this.inputPath}.mp3`
+    extractAudio(): void {
+        this.audioPath = `${this.file.path}.mp3`
 
-        return ffmpeg(this.inputPath)
+        new FfmpegProvider(this.file.path)
             .formatTo('mp3')
-            .bitRate(20)
+            .bitRate(16)
             .channels(1)
             .outDir(this.audioPath)
-            .execSync().toString()
+            .execSync()
+
+        rmSync(this.file.path)
     }
 
-    public splitAudio(): string {
-        return ffmpeg(this.audioPath)
+    splitAudio(): void {
+        new FfmpegProvider(this.audioPath)
             .formatTo('segment')
             .segmentTime(60)
-            .outDirCopy(`${this.dirPath}/%03d.mp3`)
-            .execSync().toString()
+            .outDirCopy(`${this.file.destination}/%03d.mp3`)
+            .execSync()
+
+        rmSync(this.audioPath)
     }
 }
 

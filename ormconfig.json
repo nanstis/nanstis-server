@@ -1,7 +1,0 @@
-{
-  "cli": {
-    "migrationsDir": "./src/Database/Migrations/",
-    "entitiesDir": "./src/Database/Entities/",
-    "dataSource": "default"
-  }
-}

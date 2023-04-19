@@ -1,11 +1,11 @@
-import {Blob} from 'buffer'
-import {readFileSync} from 'fs'
 import {DtoTranscript} from '../Domain/Data/Dto/DtoTranscript'
 import {DtoCompletion} from '../Domain/Data/Dto/DtoCompletion'
 import {ReqCompletion} from '../Domain/Data/Request/ReqCompletion'
 import {Client} from '../Providers/ClientProvider'
 import {DtoModel, DtoModels} from '../Domain/Data/Dto/DtoModel'
 import {environment} from '../Core/Configuration'
+import * as FormData from 'form-data'
+import {createReadStream} from 'fs'
 
 
 class ClientService {
@@ -39,12 +39,10 @@ class ClientService {
             })
     }
 
-    public getTranscript(filePath: string): Promise<DtoTranscript> {
+    public getTranscript(audioFilePath: string): Promise<DtoTranscript> {
         const data: FormData = new FormData()
-        const fileBlob: Blob = new Blob([readFileSync(filePath)])
 
-        // @ts-ignore - value is typed Blob | string
-        data.append('file', fileBlob, filePath)
+        data.append('file', createReadStream(audioFilePath))
         data.append('model', 'whisper-1')
 
         return this.httpClient.postFormData<DtoTranscript>('/audio/transcriptions', data)

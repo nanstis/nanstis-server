@@ -3,13 +3,12 @@
     "target": "ES6",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "outDir": "./build",
+    "outDir": "./dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "lib": [
-      "ES6",
-      "dom"
+      "ES6"
     ]
   }
 }

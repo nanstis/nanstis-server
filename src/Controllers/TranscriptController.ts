@@ -3,8 +3,8 @@ import {incomingFile} from '../Core/FileHandler'
 import {Controller} from '../Core/Controller'
 import {Request, RequestHandler, Response} from 'express'
 import {TranscriptService} from '../Services/TranscriptService'
-import {Transcript} from '../Database/Models/Transcript'
 import {File} from '../env'
+import {Segment} from '../Database/Models/Segment'
 
 @injectable()
 class TranscriptController extends Controller {
@@ -16,19 +16,17 @@ class TranscriptController extends Controller {
         return (req: Request, res: Response): void => {
             const incomingFile: File = req.file
 
-            this.transcriptService.createTranscript(incomingFile)
-                .then((transcript: Transcript): void => {
-                    res.send({
-                        message: 'File uploaded successfully',
-                        transcript: transcript,
-                    })
+            this.transcriptService.createTranscript(incomingFile).then((promises: Promise<Segment>[]): void => {
+                Promise.all(promises).then((segments: Segment[]): void => {
+                    res.send(segments)
                 })
+            })
         }
     }
 
     protected configureRouter(): void {
         this.router
-            .use(incomingFile('audio'))
+            .use(incomingFile('file'))
     }
 
     protected initializeRoutes(): void {
