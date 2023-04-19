@@ -1,14 +1,21 @@
-import 'reflect-metadata'
+import {dataSource} from './Core/Database'
+import {bootstrap} from './Core/Boot'
 import {container} from 'tsyringe'
-
-import {CoreModule} from './Modules/Core'
+import {TranscriptController} from './Controllers/TranscriptController'
 import {ModelController} from './Controllers/ModelController'
-import {ChatController} from './Controllers/ChatController'
-import {AudioController} from './Controllers/AudioController'
+import {CompletionController} from './Controllers/CompletionController'
+import {logger} from './Core/Logger'
+import {environment} from './Core/Configuration'
 
-CoreModule.bootstrap([
-    container.resolve(AudioController),
-    container.resolve(ChatController),
-    container.resolve(ModelController),
-])
+dataSource.initialize().then((): void => {
+
+    bootstrap([
+        container.resolve(TranscriptController),
+        container.resolve(CompletionController),
+        container.resolve(ModelController),
+    ])
+
+    logger.info(`Server started on port ${environment.PORT}`)
+
+})
 

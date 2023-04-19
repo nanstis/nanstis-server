@@ -2,6 +2,7 @@ env:
   es6: true
   node: true
   commonjs: true
+  browser: true
 
 extends:
   - eslint:recommended
@@ -44,11 +45,3 @@ rules:
     - args: all
       argsIgnorePattern: ^[a-z]
       varsIgnorePattern: ^[A-Z]
-
-globals:
-  document: true
-  requestAnimationFrame: true
-  window: true
-  self: true
-  fetch: true
-  Headers: true

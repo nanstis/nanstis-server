@@ -1,0 +1,8 @@
+::1 - - [19/Apr/2023:11:13:26 +0000] "GET /models HTTP/1.1" 200 1417 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:13:39 +0000] "GET /models HTTP/1.1" 200 1417 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:13:54 +0000] "GET /models HTTP/1.1" 200 1417 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:14:34 +0000] "GET /modelsf HTTP/1.1" 404 146 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:14:48 +0000] "GET /models HTTP/1.1" 200 1417 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:15:01 +0000] "GET /models/babbage HTTP/1.1" 200 410 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:15:06 +0000] "GET /models/babbage HTTP/1.1" 200 410 "-" "PostmanRuntime/7.32.2"
+::1 - - [19/Apr/2023:11:15:14 +0000] "GET /models/babbage HTTP/1.1" 200 410 "-" "PostmanRuntime/7.32.2"

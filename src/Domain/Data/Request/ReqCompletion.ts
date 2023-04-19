@@ -1,4 +1,4 @@
-interface ReqQuestion {
+interface ReqCompletion {
     model: string;
     messages: [{
         role: string;
@@ -6,4 +6,4 @@ interface ReqQuestion {
     }]
 }
 
-export {ReqQuestion}
+export type {ReqCompletion}

@@ -1,33 +1,39 @@
 import {Request, RequestHandler, Response} from 'express'
-import {DtoModel} from '../Domain/Data/DtoModel'
+import {Controller} from '../Core/Controller'
+import {DtoModel} from '../Domain/Data/Dto/DtoModel'
+import {ClientService} from '../Services/ClientService'
+import {json} from 'body-parser'
 import {injectable} from 'tsyringe'
-import {RouterModule} from '../Modules/Router'
-import {AiService} from '../Services/AiService'
-import Controller = RouterModule.Controller;
 
 @injectable()
 class ModelController extends Controller {
-    constructor(private aiService: AiService) {
+    constructor(private clientService: ClientService) {
         super()
     }
 
     public getModels(): RequestHandler {
         return (req: Request, res: Response): void => {
-            this.aiService.getModels().then((response: string[]): void => {
-                res.send({models: response})
-            })
+            
+            this.clientService.getModels()
+                .then((response: string[]): void => {
+                    res.send({models: response})
+                })
         }
     }
 
     public getModel(): RequestHandler {
         return (req: Request, res: Response): void => {
-            this.aiService.getModel(req.params.modelId).then((response: DtoModel): void => {
-                res.send(response)
-            })
+            const modelId: string = req.params.modelId
+
+            this.clientService.getModel(modelId)
+                .then((response: DtoModel): void => {
+                    res.send(response)
+                })
         }
     }
 
     protected configureRouter(): void {
+        this.router.use(json())
     }
 
     protected initializeRoutes(): void {

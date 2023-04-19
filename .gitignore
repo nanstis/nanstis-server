@@ -1,6 +1,7 @@
-/node_modules
-/.idea
-/dist
-error.log
-/public/uploads/**
 .env
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
