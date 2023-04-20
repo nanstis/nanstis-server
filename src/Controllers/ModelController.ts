@@ -13,7 +13,6 @@ class ModelController extends Controller {
 
     public getModels(): RequestHandler {
         return (req: Request, res: Response): void => {
-            
             this.clientService.getModels()
                 .then((response: string[]): void => {
                     res.send({models: response})

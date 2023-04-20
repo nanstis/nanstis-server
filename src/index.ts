@@ -8,7 +8,7 @@ import {logger} from './Core/Logger'
 import {environment} from './Core/Configuration'
 
 dataSource.initialize().then((): void => {
-
+    
     bootstrap([
         container.resolve(TranscriptController),
         container.resolve(CompletionController),
