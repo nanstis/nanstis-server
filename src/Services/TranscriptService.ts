@@ -58,8 +58,6 @@ class TranscriptService {
             .channels(1)
             .outDir(this.audioPath)
             .execSync()
-
-        rmSync(this.file.path)
     }
 
     splitAudio(): void {
