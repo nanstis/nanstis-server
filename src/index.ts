@@ -8,14 +8,14 @@ import {logger} from './Core/Logger'
 import {environment} from './Core/Configuration'
 
 dataSource.initialize().then((): void => {
-    
+
     bootstrap([
         container.resolve(TranscriptController),
         container.resolve(CompletionController),
         container.resolve(ModelController),
     ])
 
-    logger.info(`Server started on port ${environment.PORT}`)
+    logger.info(`Server started on port ${environment.PORT}...`)
 
 })
 

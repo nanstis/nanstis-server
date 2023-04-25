@@ -19,9 +19,14 @@ class ClientService {
         )
     }
 
-    public getModels(): Promise<string[]> {
-        return this.httpClient.get<DtoModels>('/models').then((response: DtoModels): string[] => {
-            return response.data.map((model: DtoModel) => model.id)
+    public getModels(): Promise<DtoModel[]> {
+        return this.httpClient.get<DtoModels>('/models').then((response: DtoModels): DtoModel[] => {
+            return response.data.map((model: DtoModel): DtoModel => {
+                return {
+                    id: model.id,
+                    permission: model.permission,
+                }
+            })
         })
     }
 
