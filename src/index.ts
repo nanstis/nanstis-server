@@ -1,21 +1,24 @@
-import {dataSource} from './Core/Database'
-import {bootstrap} from './Core/Boot'
-import {container} from 'tsyringe'
-import {TranscriptController} from './Controllers/TranscriptController'
-import {ModelController} from './Controllers/ModelController'
-import {CompletionController} from './Controllers/CompletionController'
-import {logger} from './Core/Logger'
-import {environment} from './Core/Configuration'
+import 'reflect-metadata'
+import { container } from 'tsyringe'
+import { CompletionController } from './Controllers/CompletionController'
+import { ModelController } from './Controllers/ModelController'
+import { TranscriptController } from './Controllers/TranscriptController'
+import { bootstrap } from './Core/Boot'
+import { environment } from './Core/Configuration'
+import { dataSource } from './Core/Database'
+import { logger } from './Core/Logger'
 
 dataSource.initialize().then((): void => {
 
-    bootstrap([
-        container.resolve(TranscriptController),
-        container.resolve(CompletionController),
-        container.resolve(ModelController),
-    ])
+  bootstrap([
+    container.resolve(TranscriptController),
+    container.resolve(CompletionController),
+    container.resolve(ModelController),
+  ])
 
-    logger.info(`Server started on port ${environment.PORT}...`)
+  logger.info(`Server started on port ${environment.PORT}...`)
 
+}).catch((err: Error): void => {
+  logger.error('Problem starting server: ', err)
 })
 
